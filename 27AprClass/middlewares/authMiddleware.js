@@ -6,7 +6,6 @@ const users = [
 ];
 
 const validationMiddleware = (req, res, next) => {
-  console.log("validationMiddleware");
   const { username, password } = req.body;
   if (username && password) {
     return next();
@@ -15,19 +14,15 @@ const validationMiddleware = (req, res, next) => {
 };
 
 const signupMiddleware = (req, res, next) => {
-  console.log("singupMiddleware");
   const { username } = req.body;
   const userExists = users.some((user) => user.username === username);
   if (!userExists) {
-    const token = jwt.sign({ username }, "mySecret");
-    req.token = token;
     return next();
   }
   res.send(`username ${username} already exists. Try a different one.`);
 };
 
 const signinMiddleware = (req, res, next) => {
-  console.log("signInMiddleware");
   const { username, password } = req.body;
   const userExists = users.some(
     (user) => user.username === username && user.password === password
@@ -42,7 +37,6 @@ const signinMiddleware = (req, res, next) => {
 };
 
 const accessMiddleware = (req, res, next) => {
-  console.log("accessMiddleware");
   const token = req.headers.authorization;
   if (token) {
     jwt.verify(token, "mySecret", (err, data) => {

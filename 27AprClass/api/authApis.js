@@ -1,17 +1,11 @@
 const jwt = require("jsonwebtoken");
 
 const signupApi = (req, res) => {
-  console.log("signupApi");
   res.send("Signed up...");
 };
 
 const signinApi = (req, res) => {
-  console.log("signinApi");
   const token = req.token;
-  if (token) {
-    jwt.verify()
-  }
-  console.log(token);
   res.send({ token });
 };
 
