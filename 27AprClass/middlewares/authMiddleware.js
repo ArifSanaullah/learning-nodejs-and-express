@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const validator = require("validator");
 
 const users = [
   { username: "arif", password: "123" },
@@ -8,7 +9,10 @@ const users = [
 const validationMiddleware = (req, res, next) => {
   const { username, password } = req.body;
   if (username && password) {
-    return next();
+    if (validator.default.isLowercase(username)) {
+      return next();
+    } 
+    res.send({error: "username must be lowercased"})
   }
   res.send("You must be logged in");
 };

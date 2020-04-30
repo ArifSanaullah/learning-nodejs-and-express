@@ -1,7 +1,8 @@
-const jwt = require("jsonwebtoken");
+const moment = require("moment");
+const os = require("os");
 
 const signupApi = (req, res) => {
-  res.send("Signed up...");
+  res.send(`You signed up with username ${req.body.username}, password: ${req.body.password}, on ${moment().format()} from ${os.platform} OS`);
 };
 
 const signinApi = (req, res) => {
