@@ -1,9 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
-const Product = require("../../models/product");
-const config = require("../../config");
 const multer = require("multer");
+
+const config = require("../../config");
+const checkAuth = require("../middleware/checkAuth");
+const Product = require("../../models/product");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -60,40 +62,44 @@ router.get("/", async (req, res, next) => {
     });
 });
 
-router.post("/", upload.single("productImage"), async (req, res, next) => {
-  console.log(req.file);
-  const { name, price } = req.body;
-  const product = new Product({
-    _id: mongoose.Types.ObjectId(),
-    name,
-    price,
-    productImage: req.file.path,
-  });
-
-  await product
-    .save()
-
-    .then((result) => {
-      res.send({
-        message: "Product successfully created",
-        product: {
-          name: result.name,
-          price: result.price,
-          _id: result._id,
-          productImage: result.productImage,
-          request: {
-            type: "GET",
-            description: "CREATE_A_PRODUCT",
-            url: `${req.protocol}://${req.hostname}:${config.PORT}${req.baseUrl}/${result._id}`,
-          },
-        },
-      });
-    })
-
-    .catch((err) => {
-      res.status(500).send({ error: err.message });
+router.post(
+  "/",
+  checkAuth,
+  upload.single("productImage"),
+  async (req, res, next) => {
+    const { name, price } = req.body;
+    const product = new Product({
+      _id: mongoose.Types.ObjectId(),
+      name,
+      price,
+      productImage: req.file.path,
     });
-});
+
+    await product
+      .save()
+
+      .then((result) => {
+        res.send({
+          message: "Product successfully created",
+          product: {
+            name: result.name,
+            price: result.price,
+            _id: result._id,
+            productImage: result.productImage,
+            request: {
+              type: "GET",
+              description: "CREATE_A_PRODUCT",
+              url: `${req.protocol}://${req.hostname}:${config.PORT}${req.baseUrl}/${result._id}`,
+            },
+          },
+        });
+      })
+
+      .catch((err) => {
+        res.status(500).send({ error: err.message });
+      });
+  }
+);
 
 router.get("/:productId", async (req, res, next) => {
   const id = req.params.productId;
@@ -126,7 +132,7 @@ router.get("/:productId", async (req, res, next) => {
     });
 });
 
-router.patch("/:productId", async (req, res, next) => {
+router.patch("/:productId", checkAuth, async (req, res, next) => {
   const id = req.params.productId;
 
   const updateOps = {};
@@ -162,7 +168,7 @@ router.patch("/:productId", async (req, res, next) => {
     });
 });
 
-router.delete("/:productId", async (req, res, next) => {
+router.delete("/:productId", checkAuth, async (req, res, next) => {
   const id = req.params.productId;
 
   await Product.deleteOne({ _id: id })

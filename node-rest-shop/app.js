@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 
 const productsRoute = require("./api/routes/products");
 const ordersRoute = require("./api/routes/orders");
+const userRoute = require("./api/routes/user");
 
 const app = express();
 mongoose
@@ -11,6 +12,7 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
+    useCreateIndex: true,
   })
   .then(() => {
     console.log("Mongodb Connected!");
@@ -39,6 +41,7 @@ app.use((req, res, next) => {
 
 app.use("/products", productsRoute);
 app.use("/orders", ordersRoute);
+app.use("/user", userRoute);
 
 app.use((req, res, next) => {
   const error = new Error("Page not found!");
