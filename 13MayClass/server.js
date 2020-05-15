@@ -3,6 +3,7 @@ const morgan = require("morgan");
 const apis = require("./api");
 const middlewares = require("./middleware");
 const albums = require("./routers/albums");
+const tracks = require("./routers/tracks");
 
 const app = express();
 
@@ -12,6 +13,7 @@ app.use(morgan("dev"));
 app.get("/", (req, res) => {
   res.send("/ route.");
 });
+app.use("/tracks", tracks);
 app.get("/health", apis.healthApi);
 app.post("/signin/", middlewares.authMiddleware, apis.signInApi);
 app.post("/createuser", middlewares.createUserMiddleware, apis.createUserApi);
