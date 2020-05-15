@@ -31,28 +31,21 @@ const getUserApi = async (req, res) => {
   res.send({ user: foundUser });
 };
 
-const updateUser = async (req, res) => {
-  const { username, password, newPasswrod } = req.user;
-  try {
-    const findUser = await User.findOne({ username, password: null });
-
-    if (!findUser) {
-      return res.status(404).send({ error: "User not found!" });
-    }
-
-    await User.updateOne(
-      { username },
-      { password: newPasswrod }
-    );
-
-    res.status(200).send({
-      success: true,
-      userUpdated: true,
-      originlUser,
+const updateUser = (req, res) => {
+  const { username, password, newPassword } = req.user;
+  User.findOneAndUpdate(
+    { username, password },
+    { $set: { password: newPassword } }
+  )
+    .then((result) => {
+      if (!result) {
+        return res.status(404).send({ message: "User not found" });
+      }
+      res.status(200).send({ message: "User updated" });
+    })
+    .catch((err) => {
+      res.status(500).send({ message: err.message });
     });
-  } catch (error) {
-    res.status(500).send("Something went wrong. Please try later!");
-  }
 };
 
 const deleteUserApi = async (req, res) => {
