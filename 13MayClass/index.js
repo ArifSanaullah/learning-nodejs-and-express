@@ -5,4 +5,4 @@ const cb = () => {
 };
 
 require("./db")({ MONGO_URI: config.MONGO_URI });
-require("./server")({ port: config.PORT || 3001, cb });
+require("./app")({ port: config.PORT || 3001, cb });

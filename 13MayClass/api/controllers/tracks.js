@@ -1,8 +1,7 @@
-const tracks = require("express").Router();
 const Track = require("../models/Track");
 const Album = require("../models/Album");
 
-tracks.get("/", async (req, res) => {
+const getAllTracks = async (req, res) => {
   if (req.albumId) {
     const { albumId } = req;
 
@@ -28,9 +27,9 @@ tracks.get("/", async (req, res) => {
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
-});
+};
 
-tracks.post("/", async (req, res, next) => {
+const createTrack = async (req, res, next) => {
   const { name, albumId } = req.body;
   try {
     const findAlbum = await Album.findById(albumId);
@@ -49,9 +48,9 @@ tracks.post("/", async (req, res, next) => {
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
-});
+};
 
-tracks.get("/:trackId", async (req, res) => {
+const getTrack = async (req, res) => {
   const trackId = req.params.trackId;
 
   try {
@@ -63,9 +62,9 @@ tracks.get("/:trackId", async (req, res) => {
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
-});
+};
 
-tracks.put("/:trackId", async (req, res) => {
+const updateTrack = async (req, res) => {
   /**
    * req.body syntax =>
    * [
@@ -110,9 +109,9 @@ tracks.put("/:trackId", async (req, res) => {
       message: err.message,
     });
   }
-});
+};
 
-tracks.delete("/:trackId", async (req, res) => {
+const deleteTrack = async (req, res) => {
   try {
     trackFound = await Track.findById(req.params.trackId);
     if (!trackFound)
@@ -137,6 +136,12 @@ tracks.delete("/:trackId", async (req, res) => {
       message: err.message,
     });
   }
-});
+};
 
-module.exports = tracks;
+module.exports = {
+  getAllTracks,
+  createTrack,
+  getTrack,
+  updateTrack,
+  deleteTrack,
+};

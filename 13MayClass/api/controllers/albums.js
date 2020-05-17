@@ -1,10 +1,7 @@
-const albums = require("express").Router();
-
-const tracks = require("./tracks");
 const Album = require("../models/Album");
 const Track = require("../models/Track");
 
-albums.get("/", async (req, res) => {
+const getAllAlbums = async (req, res) => {
   try {
     const albums = await Album.find({});
     if (!albums) return res.status(404).send({ message: "No albums found" });
@@ -13,9 +10,9 @@ albums.get("/", async (req, res) => {
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
-});
+};
 
-albums.get("/:albumId", async (req, res) => {
+const getAlbum = async (req, res) => {
   const albumId = req.params.albumId;
   try {
     const album = await Album.findOne({ _id: albumId });
@@ -25,9 +22,9 @@ albums.get("/:albumId", async (req, res) => {
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
-});
+};
 
-albums.post("/", async (req, res) => {
+const createAlbum = async (req, res) => {
   try {
     const { name, tracks = [], singer } = req.body;
 
@@ -37,27 +34,23 @@ albums.post("/", async (req, res) => {
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
-});
+};
 
-albums.use(
-  "/:albumId/tracks",
-  async (req, res, next) => {
-    try {
-      const foundAlbum = await Album.findById(req.params.albumId);
+const manageAlbumTracks = async (req, res, next) => {
+  try {
+    const foundAlbum = await Album.findById(req.params.albumId);
 
-      if (!foundAlbum)
-        return res.status(404).send({ message: "Album not found" });
+    if (!foundAlbum)
+      return res.status(404).send({ message: "Album not found" });
 
-      req.albumId = req.params.albumId;
-      next();
-    } catch (err) {
-      res.status(500).send({ message: err.message });
-    }
-  },
-  tracks
-);
+    req.albumId = req.params.albumId;
+    next();
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+};
 
-albums.put("/:albumId", async (req, res) => {
+const updateAlbum = async (req, res) => {
   try {
     const updatedProps = {};
     for (const prop of req.body) {
@@ -74,9 +67,9 @@ albums.put("/:albumId", async (req, res) => {
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
-});
+};
 
-albums.delete("/:albumId", async (req, res) => {
+const deleteAlbum = async (req, res) => {
   try {
     const { albumId } = req.params;
     const albumFound = await Album.findById(albumId);
@@ -91,6 +84,13 @@ albums.delete("/:albumId", async (req, res) => {
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
-});
+};
 
-module.exports = albums;
+module.exports = {
+  getAllAlbums,
+  getAlbum,
+  createAlbum,
+  manageAlbumTracks,
+  updateAlbum,
+  deleteAlbum,
+};
