@@ -1,9 +1,10 @@
 const mongoose = require("mongoose");
 
-const albumSchema = mongoose.Schema({
+const albumSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
+    index: true
   },
   tracks: {
     type: Array,
@@ -12,6 +13,7 @@ const albumSchema = mongoose.Schema({
   singer: {
     type: String,
     default: "Unknown",
+    index: true
   },
 });
 

@@ -3,6 +3,7 @@ const morgan = require("morgan");
 const albums = require("./api/routers/albums");
 const tracks = require("./api/routers/tracks");
 const user = require("./api/routers/user");
+const search = require("./api/routers/search");
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.get("/health", (req, res) => {
 app.use("/user", user);
 app.use("/tracks", tracks);
 app.use("/albums", albums);
+app.use("/search", search);
 
 //handling unknown(404) route requests
 app.use((req, res, next) => {
