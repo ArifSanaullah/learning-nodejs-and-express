@@ -3,7 +3,8 @@ const Track = require("../models/Track");
 
 const getAllAlbums = async (req, res) => {
   try {
-    const albums = await Album.find({});
+    const albums = await Album.find({}).populate("tracks");
+
     if (!albums) return res.status(404).send({ message: "No albums found" });
 
     res.status(200).send({ count: albums.length, albums });
@@ -15,7 +16,12 @@ const getAllAlbums = async (req, res) => {
 const getAlbum = async (req, res) => {
   const albumId = req.params.albumId;
   try {
-    const album = await Album.findOne({ _id: albumId });
+    const album = await Album.findOne({ _id: albumId })
+      .select("singer _id name tracks")
+      .populate("tracks").exec((err, doc) => {
+        console.log(doc);
+      });
+
     if (!album) return res.status(404).send({ message: "No album found" });
 
     res.status(200).send(album);

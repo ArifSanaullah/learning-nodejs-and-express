@@ -7,6 +7,7 @@ const getAllTracks = async (req, res) => {
 
     try {
       const album = await Album.findOne({ _id: albumId });
+
       if (!album) return res.status(404).send({ message: "No tracks found" });
 
       const tracks = await Track.find({ albumId });
@@ -19,11 +20,13 @@ const getAllTracks = async (req, res) => {
   }
 
   try {
-    const tracks = await Track.find({}).select("name _id albumId");
+    const tracks = await Track.find({})
+      .select("name _id albumId")
+      .populate({path: "albumId", select: "name"});
 
     if (!tracks) return res.status(404).send({ message: "No tracks found" });
 
-    res.status(200).send(tracks);
+    res.status(200).send([...tracks]);
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
@@ -54,8 +57,8 @@ const getTrack = async (req, res) => {
   const trackId = req.params.trackId;
 
   try {
-    const track = await Track.findOne({ _id: trackId });
-
+    const track = await Track.findOne({ _id: trackId }).populate("albumId");
+    console.log(track.populated("albumId"));
     if (!track) return res.status(404).send({ message: "Track not found" });
 
     res.status(200).send(track);

@@ -6,7 +6,9 @@ const trackSchema = mongoose.Schema({
     required: true,
   },
   albumId: {
+    _id: mongoose.Schema.Types.ObjectId,
     type: mongoose.Schema.Types.ObjectId,
+    ref: "Album",
   },
 });
 
